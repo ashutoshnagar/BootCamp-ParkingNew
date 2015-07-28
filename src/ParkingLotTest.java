@@ -33,7 +33,10 @@ public class ParkingLotTest {
     public void testParkWithParkingFullException() throws Exception {
 
         parkingLot.park(new Car(1213));
-        assertEquals(3, parkingLot.park(new Car(1214)));
+        parkingLot.park(new Car(1215));
+        parkingLot.park(new Car(1216));
+        parkingLot.park(new Car(1217));
+        assertEquals(6, parkingLot.park(new Car(1214)));
     }
 
     @org.junit.Test(expected = CarAlreadyParkedException.class)
@@ -102,54 +105,52 @@ public class ParkingLotTest {
 */
 
     @org.junit.Test
-public void testNotifyPark(){
+public void testNotifyParkwithNotificationEvent(){
         TestFBIAgent agent1 = new TestFBIAgent();
         TestFBIAgent agent2 = new TestFBIAgent();
         TestFBIAgent agent3 = new TestFBIAgent();
 
         parkingLot.register(agent1, new Subscription60());
-/*
-        parkingLot.register(agent2,new Subscription60());
+        parkingLot.register(agent2,new Subscription40());
         parkingLot.register(agent3,new Subscription60());
-*/
+
 
         parkingLot.park(new Car(1213));
 
+        assertEquals(NotificationCode.FULL, agent2.CODE);
 
         assertEquals(NotificationCode.FULL, testParkingLotOwner.CODE);
+
         parkingLot.park(new Car(1214));
         assertEquals(NotificationCode.FULL, agent1.CODE);
+        assertEquals(NotificationCode.FULL, agent3.CODE);
 
     }
 
     @org.junit.Test
-    public void testNotifyUnPark(){
+    public void testNotifyUnParkwithNotificationEvent(){
         TestFBIAgent agent1 = new TestFBIAgent();
         TestFBIAgent agent2 = new TestFBIAgent();
         TestFBIAgent agent3 = new TestFBIAgent();
 
         parkingLot.register(agent1, new Subscription60());
-/*
-        parkingLot.register(agent2,new Subscription60());
-        parkingLot.register(agent3,new Subscription60());
-*/
+        parkingLot.register(agent2, new Subscription40());
+        parkingLot.register(agent3, new Subscription60());
 
         parkingLot.park(new Car(1213));
-
-
-        assertEquals(NotificationCode.FULL, testParkingLotOwner.CODE);
         parkingLot.park(new Car(1214));
 
         parkingLot.park(new Car(1215));
-        assertEquals(NotificationCode.FULL, agent1.CODE);
 
 
         parkingLot.unPark(3);
         assertEquals(NotificationCode.VACANT, agent1.CODE);
+        assertEquals(NotificationCode.VACANT, agent3.CODE);
+
         parkingLot.unPark(2);
-      //  assertEquals(NotificationCode.VACANT,testParkingLotOwner.CODE);
         assertEquals(NotificationCode.VACANT, testParkingLotOwner.CODE);
-   //
+        assertEquals(NotificationCode.VACANT, agent2.CODE);
+
     }
 
 }
