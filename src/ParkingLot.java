@@ -3,28 +3,26 @@ import exceptions.CarNotParkedException;
 import exceptions.ParkingFullException;
 import model.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ParkingLot {
     private int token;
     private Map<Integer, Car> parkingSpace = new HashMap<Integer, Car>();
     private int CAPACITY = 2;
-    private List<ParkingLotObserver> observers;
+    private Map<ParkingLotObserver,SubscriptionStrategy> observers;
 
     public ParkingLot() {
     }
 
-    public ParkingLot(TestParkingLotOwner owner) {
-        this.observers = new ArrayList<ParkingLotObserver>();
-        observers.add(owner);
+    public ParkingLot(TestParkingLotOwner owner,SubscriptionStrategy strategy) {
+        this.observers = new HashMap<ParkingLotObserver,SubscriptionStrategy>();
+        observers.put(owner,strategy);
     }
 
-    public ParkingLot(ParkingLotOwner owner, int capacity) {
+    public ParkingLot(TestParkingLotOwner owner,SubscriptionStrategy strategy, int capacity) {
         this.CAPACITY = capacity;
-       observers.add(owner);
+        this.observers = new HashMap<ParkingLotObserver,SubscriptionStrategy>();
+        observers.put(owner,strategy);
     }
 
     public int park(Car car) {
@@ -35,11 +33,8 @@ public class ParkingLot {
             throw new ParkingFullException();
 
         parkingSpace.put(++token, car);
-        if (isParkingFull()) {
+        notifyObservers(new NotificationEvent(EventType.CAR_PARKED, CAPACITY, parkingSpace.size()));
 
-           notifyObservers(1);
-
-        }
         return token;
     }
 
@@ -47,10 +42,11 @@ public class ParkingLot {
 
         if (!parkingSpace.containsKey(token))
             throw new CarNotParkedException();
-        if (isParkingFull()) {
-            notifyObservers(2);
 
-        }
+
+            notifyObservers(new NotificationEvent(EventType.CAR_UNPARKED,CAPACITY,observers.size()));
+
+
         return parkingSpace.remove(token);
 
     }
@@ -59,27 +55,25 @@ public class ParkingLot {
         return parkingSpace.size() == CAPACITY;
     }
 
-    private void notifyObservers(int code){
-        switch (code)
-        {
-            case 1:
-                for(ParkingLotObserver observer:observers)
-                    observer.takeActtion(NotificationCode.FULL);
-                    break;
-            case 2:
-                for(ParkingLotObserver observer:observers)
-                    observer.takeActtion(NotificationCode.VACANT);
-                    break;
-            default:break;
+    private void notifyObservers(NotificationEvent event) {
 
+        for (ParkingLotObserver observer : observers.keySet()) {
+            SubscriptionStrategy strategy = observers.get(observer);
+            if (strategy.apply(event)) {
+             if(event.getTYPE()==EventType.CAR_PARKED)
+                observer.notify(NotificationCode.FULL);
+                else
+                 observer.notify(NotificationCode.VACANT);
+            }
         }
     }
 
-    public void register(ParkingLotObserver agent) {
-        observers.add(agent);
+
+    public void register(ParkingLotObserver observer,SubscriptionStrategy strategy) {
+        observers.put(observer,strategy);
     }
 
-    public void unRegister(ParkingLotObserver agent) {
-        observers.remove(agent);
+    public void unRegister(ParkingLotObserver observer) {
+        observers.remove(observer);
     }
 }

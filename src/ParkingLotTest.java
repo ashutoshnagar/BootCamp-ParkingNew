@@ -16,7 +16,7 @@ public class ParkingLotTest {
     @Before
     public void setUp() {
         testParkingLotOwner = new TestParkingLotOwner();
-        parkingLot = new ParkingLot(testParkingLotOwner);
+        parkingLot = new ParkingLot(testParkingLotOwner,new Subscription40(),5);
 
         parkingLot.park(new Car(1212));
 
@@ -55,6 +55,7 @@ public class ParkingLotTest {
     }
 
 
+/*
 
     @org.junit.Test
     public void testFBIAgentNotifiedOnParkingFull()
@@ -98,6 +99,56 @@ public class ParkingLotTest {
         assertEquals(NotificationCode.VACANT, agent2.CODE);
         assertEquals(NotificationCode.VACANT, agent3.CODE);
     }
+*/
 
+    @org.junit.Test
+public void testNotifyPark(){
+        TestFBIAgent agent1 = new TestFBIAgent();
+        TestFBIAgent agent2 = new TestFBIAgent();
+        TestFBIAgent agent3 = new TestFBIAgent();
+
+        parkingLot.register(agent1, new Subscription60());
+/*
+        parkingLot.register(agent2,new Subscription60());
+        parkingLot.register(agent3,new Subscription60());
+*/
+
+        parkingLot.park(new Car(1213));
+
+
+        assertEquals(NotificationCode.FULL, testParkingLotOwner.CODE);
+        parkingLot.park(new Car(1214));
+        assertEquals(NotificationCode.FULL, agent1.CODE);
+
+    }
+
+    @org.junit.Test
+    public void testNotifyUnPark(){
+        TestFBIAgent agent1 = new TestFBIAgent();
+        TestFBIAgent agent2 = new TestFBIAgent();
+        TestFBIAgent agent3 = new TestFBIAgent();
+
+        parkingLot.register(agent1, new Subscription60());
+/*
+        parkingLot.register(agent2,new Subscription60());
+        parkingLot.register(agent3,new Subscription60());
+*/
+
+        parkingLot.park(new Car(1213));
+
+
+        assertEquals(NotificationCode.FULL, testParkingLotOwner.CODE);
+        parkingLot.park(new Car(1214));
+        parkingLot.park(new Car(1215));
+        assertEquals(NotificationCode.FULL, agent1.CODE);
+        System.out.print("assa");
+
+        parkingLot.unPark(3);
+        System.out.print("assa");
+
+        parkingLot.unPark(2);
+        System.out.print("assa");
+        assertEquals(NotificationCode.VACANT, agent1.CODE);
+    }
 
 }
