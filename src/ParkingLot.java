@@ -44,7 +44,7 @@ public class ParkingLot {
             throw new CarNotParkedException();
 
 
-            notifyObservers(new NotificationEvent(EventType.CAR_UNPARKED,CAPACITY,observers.size()));
+            notifyObservers(new NotificationEvent(EventType.CAR_UNPARKED,CAPACITY,parkingSpace.size()-1));
 
 
         return parkingSpace.remove(token);
@@ -62,11 +62,11 @@ public class ParkingLot {
             if (strategy.apply(event)) {
              if(event.getTYPE()==EventType.CAR_PARKED)
                 observer.notify(NotificationCode.FULL);
-                else
-                 observer.notify(NotificationCode.VACANT);
+             else
+                 observer.notify(NotificationCode.VACANT);}
             }
         }
-    }
+
 
 
     public void register(ParkingLotObserver observer,SubscriptionStrategy strategy) {

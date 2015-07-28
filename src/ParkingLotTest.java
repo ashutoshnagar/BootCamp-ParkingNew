@@ -139,16 +139,17 @@ public void testNotifyPark(){
 
         assertEquals(NotificationCode.FULL, testParkingLotOwner.CODE);
         parkingLot.park(new Car(1214));
+
         parkingLot.park(new Car(1215));
         assertEquals(NotificationCode.FULL, agent1.CODE);
-        System.out.print("assa");
+
 
         parkingLot.unPark(3);
-        System.out.print("assa");
-
-        parkingLot.unPark(2);
-        System.out.print("assa");
         assertEquals(NotificationCode.VACANT, agent1.CODE);
+        parkingLot.unPark(2);
+      //  assertEquals(NotificationCode.VACANT,testParkingLotOwner.CODE);
+        assertEquals(NotificationCode.VACANT, testParkingLotOwner.CODE);
+   //
     }
 
 }
