@@ -1,5 +1,5 @@
 package model;
 
 public interface ParkingLotObserver {
- public void notify(ObserverNotificationEvent notificationEvent);
+ public void notify(NotificationEvent notificationEvent);
 }

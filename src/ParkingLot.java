@@ -32,7 +32,7 @@ public class ParkingLot {
         this.attendant=attendant;
     }
 
-    public int park(Car car) {
+    public  CarToken park(Car car) {
 
         if (parkingSpace.containsValue(car))
             throw new CarAlreadyParkedException();
@@ -40,13 +40,9 @@ public class ParkingLot {
             throw new ParkingFullException();
 
         parkingSpace.put(++token, car);
-        notifyObservers(new NotificationEvent(EventType.CAR_PARKED, CAPACITY, parkingSpace.size()));
+        notifyObservers(new NotificationEvent(parkingLotId,EventType.CAR_PARKED, CAPACITY, parkingSpace.size()));
 
-        if(isParkingFull())
-        {
-            attendant.notify(new ObserverNotificationEvent(NotificationCode.FULL, parkingLotId));
-        }
-        return token;
+        return new CarToken(parkingLotId,token);
     }
 
     public Car unPark(int token) {
@@ -54,12 +50,8 @@ public class ParkingLot {
         if (!parkingSpace.containsKey(token))
             throw new CarNotParkedException();
 
-            notifyObservers(new NotificationEvent(EventType.CAR_UNPARKED,CAPACITY,parkingSpace.size()-1));
+            notifyObservers(new NotificationEvent(parkingLotId,EventType.CAR_UNPARKED,CAPACITY,parkingSpace.size()-1));
 
-        if(isParkingFull())
-        {
-            attendant.notify(new ObserverNotificationEvent(NotificationCode.VACANT, parkingLotId));
-        }
         return parkingSpace.remove(token);
 
     }
@@ -69,15 +61,16 @@ public class ParkingLot {
     }
 
     private void notifyObservers(NotificationEvent event) {
-
+        attendant.notify(event);
         for (ParkingLotObserver observer : observers.keySet()) {
             SubscriptionStrategy strategy = observers.get(observer);
             if (strategy.apply(event)) {
-             if(event.getTYPE()==EventType.CAR_PARKED)
-                observer.notify(new ObserverNotificationEvent(NotificationCode.FULL, parkingLotId) );
-             else
-                 observer.notify(new ObserverNotificationEvent(NotificationCode.VACANT, parkingLotId));}
-            }
+                if (event.getTYPE() == EventType.CAR_PARKED)
+                        observer.notify(new NotificationEvent(parkingLotId,EventType.FULL,0,0));
+                 else  if (event.getTYPE() == EventType.CAR_UNPARKED)
+                       observer.notify(new NotificationEvent(parkingLotId,EventType.VACANT,0,0));
+
+            }}
         }
 
     public void register(ParkingLotObserver observer,SubscriptionStrategy strategy) {

@@ -1,12 +1,14 @@
 package model;
 
 public class NotificationEvent {
+    private int parkingLotId;
     private EventType TYPE;
     private int CAPACITY;
     private  int currentSize;
 
-    public NotificationEvent(EventType TYPE, int CAPACITY, int currentSize) {
+    public NotificationEvent(int parkingLotId,EventType TYPE, int CAPACITY, int currentSize) {
         this.TYPE = TYPE;
+        this.parkingLotId=parkingLotId;
         this.CAPACITY = CAPACITY;
         this.currentSize = currentSize;
     }
@@ -21,5 +23,9 @@ public class NotificationEvent {
 
     public int getCurrentSize() {
         return currentSize;
+    }
+
+    public int getParkingLotId() {
+        return parkingLotId;
     }
 }

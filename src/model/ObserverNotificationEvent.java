@@ -7,6 +7,9 @@ public class ObserverNotificationEvent {
     {this.CODE=CODE;
         this.parkingLotId=parkingLotId;}
 
+    public ObserverNotificationEvent(NotificationEvent event) {
+    }
+
     public int getParkingLotId() {
         return parkingLotId;
     }

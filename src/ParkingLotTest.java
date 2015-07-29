@@ -107,9 +107,9 @@ public class ParkingLotTest {
     public void testAttendantParking() {
         TestParkingLotOwner owner = new TestParkingLotOwner();
         ParkingLotAttendant attendant = new ParkingLotAttendant();
-        ParkingLot parkingLot1 = new ParkingLot(owner, new Subscription40(), 2, 1, attendant);
-        ParkingLot parkingLot2 = new ParkingLot(owner, new Subscription40(), 2, 2, attendant);
-        ParkingLot parkingLot3 = new ParkingLot(owner, new Subscription40(), 2, 3, attendant);
+        ParkingLot parkingLot1 = new ParkingLot(owner, new Subscription40(), 1, 1, attendant);
+        ParkingLot parkingLot2 = new ParkingLot(owner, new Subscription40(), 1, 2, attendant);
+        ParkingLot parkingLot3 = new ParkingLot(owner, new Subscription40(), 1, 3, attendant);
 
         TestFBIAgent agent1 = new TestFBIAgent();
         TestFBIAgent agent2 = new TestFBIAgent();
@@ -131,10 +131,8 @@ public class ParkingLotTest {
         attendant.park(new Car(1212));
         attendant.park(new Car(1213));
         attendant.park(new Car(1214));
-
-        String token = attendant.park(new Car(1215));
-
-        System.out.println(token);
+        attendant.unPark(new CarToken(2,1));
+        CarToken token = attendant.park(new Car(1215));
         assertEquals(new Car(1215), attendant.unPark(token));
 
     }
