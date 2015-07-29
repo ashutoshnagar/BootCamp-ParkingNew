@@ -5,7 +5,7 @@ import model.ParkingLotObserver;
 public class ParkingLotOwner implements ParkingLotObserver {
 
     @Override
-    public void notify(NotificationCode CODE) {
+    public void notify(ObserverNotificationEvent notificationEvent) {
 
     }
 }
