@@ -15,7 +15,7 @@ public class ParkingLotAttendant implements ParkingLotObserver {
 
     public CarToken park(Car car) {
         ParkingLot parkingLot = getAvailableParkingLot();
-        System.out.println(parkingLotStatusMap);
+     //   System.out.println(parkingLotStatusMap);
         return  parkingLot.park(car);
     }
 
@@ -46,17 +46,26 @@ public class ParkingLotAttendant implements ParkingLotObserver {
     @Override
     public void notify(NotificationEvent notificationEvent) {
         double value=notificationEvent.getCurrentSize()/notificationEvent.getCAPACITY();
-        if (EventType.CAR_PARKED == notificationEvent.getTYPE()) {
-            if(value==1.0)
-                parkingLotStatusMap.remove(new Integer(notificationEvent.getParkingLotId()));
-            else
-                parkingLotStatusMap.put(new Integer(notificationEvent.getParkingLotId()),value);
-        } else {
-            if(value==0.0)
-            parkingLotStatusMap.put(new Integer(notificationEvent.getParkingLotId()), 1.0);
+        if (EventType.CAR_PARKED == notificationEvent.getTYPE())
+            takeActionWhenParked(notificationEvent.getParkingLotId(),value);
+         else
+            takeActionWhenUnParked(notificationEvent.getParkingLotId(),value);
+    }
 
-                parkingLotStatusMap.put(new Integer(notificationEvent.getParkingLotId()),value);
+    public void takeActionWhenParked(int parkingLotId,double value)
+    {
+        if(value==1.0)
+            parkingLotStatusMap.remove(new Integer(parkingLotId));
+        else
+            parkingLotStatusMap.put(new Integer(parkingLotId),value);
+    }
+    public  void takeActionWhenUnParked(int parkingLotId,double value)
+    {
 
+        if(value==0.0)
+            parkingLotStatusMap.put(new Integer(parkingLotId), 1.0);
+        else
+            parkingLotStatusMap.put(new Integer(parkingLotId),value);
 
-        }}
+    }
 }
